@@ -57,8 +57,8 @@ public class NBody {
             StdDraw.pause(10);
 
             StdDraw.picture(0, 0, bgToDraw);
-            for(int i=0;i<planets.length;i++){
-                planets[i].draw();
+            for(int k=0;k<planets.length;k++){
+                planets[k].draw();
             }
 
             StdDraw.show();
