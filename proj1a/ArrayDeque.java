@@ -1,26 +1,51 @@
+/**
+ * in arrayDeque,
+ * first element of this array is nextFirst + 1
+ * last element is nextLast - 1;
+ * @param <Item>
+ */
 public class ArrayDeque<Item> {
 
     private Item[] items;
     private int size;
-    private int nextFirst;
-    private int nextLast;
-    // no need for maxIndex: because we can directly use items.length.
-//    private int maxIndex;
-    private static int RFACTOR = 2; // when resizing array
+    public int nextFirst;
+    public int nextLast;
+    // no need for maxIndex: because directly use items.length.
+    private static int REFACTOR = 2; // when resizing array
 
     /** constructor: Creates an empty list. */
+
     public ArrayDeque(){
-//        maxIndex = 7;
         items = (Item[]) new Object[8];
         size = 0;
         nextFirst = 3;
         nextLast = 4; // this number is pick up randomly
+
+    }
+
+    /**
+     * check if the ArrayDeque is empty.
+     * @return
+     */
+    public boolean isEmpty(){
+        return (size == 0) ? (true):(false);
     }
 
 
+
+    /** check if arrayDeque is full. */
+    public boolean isFull(){
+        return (size == items.length) ? (true):(false);
+
+    }
+
+    public int size(){
+        return size;
+    }
+
     public void addLast(Item item) {
         if (isFull()) {
-            resize(REFACTOR * items.length)
+            resize(REFACTOR * items.length);
         }
         size += 1;
         items[nextLast] = item;
@@ -33,7 +58,7 @@ public class ArrayDeque<Item> {
         }
         size += 1;
         items[nextFirst] = item;
-        nextFirst = (nextFirst - 1) % items.length; // via:https://github.com/CurryTang/Palindrome/blob/master/ArrayDeque.java
+        nextFirst = (items.length + nextFirst - 1) % items.length; // via:https://github.com/CurryTang/Palindrome/blob/master/ArrayDeque.java
     }
 
     /**
@@ -42,7 +67,13 @@ public class ArrayDeque<Item> {
      */
     public void resize(int capacity){
         Item[] resizeArray = (Item[]) new Object[capacity];
-        System.arraycopy(items, 0, resizeArray, 0, size);
+        int startPos = (nextFirst + 1) % items.length;
+        System.arraycopy(items, startPos,
+                resizeArray, capacity - (items.length - startPos), items.length - startPos);
+
+        System.arraycopy(items, 0, resizeArray, 0, nextLast);
+
+        nextFirst = capacity - (items.length - nextFirst); // next last stays the same.
         items = resizeArray;
     }
 
@@ -55,7 +86,7 @@ public class ArrayDeque<Item> {
          * the memory that my program uses must be proportional to the number of items.
          * For arrays of length 16 or more, your usage factor should always be at least 25%.
          */
-        if (size <= items.length / 4 && items.length > 16 && maxDepth < items.length / 2){
+        if (size <= items.length / 4 && items.length > 16){
             resize(items.length / 2);
         }
         int removeIndex = (nextFirst + 1) % items.length;
@@ -92,51 +123,12 @@ public class ArrayDeque<Item> {
     }
 
 
-    /**
-     * check if the ArrayDeque is empty.
-     * @return
-     */
-    public boolean isEmpty(){
-        return (size == 0) ? (true):(false);
-        }
-
-    }
-
-    /** see if arrayDeque is full. */
-    public boolean isFull(){
-        if (nextLast == nextFirst){
-            return true
-        }
-
-    }
-
-    public int size(){
-        return size;
-    }
-
     public void printDeque(){
         int start = (nextFirst + 1) % items.length;
         while (start != nextLast){
-            System.out.println(items[start]);
-            start += (start + 1) % items.length;
+            System.out.print(items[start]);
+            System.out.print(' ');
+            start = (start + 1) % items.length;
         }
     }
-
-    public static void main(String[] args) {
-        ArrayDeque<Integer> test = new ArrayDeque();
-        test.addFirst(10);
-        test.addFirst(142);
-        test.addFirst(21891);
-        test.addLast(1);
-        test.addLast(2);
-        test.addLast(21);
-        test.addFirst(2934);
-        test.addLast(1212);
-        test.addFirst(9398);
-        test.printDeque();
-        System.out.println("this size of this array is " + test.size());
-
-
-    }
-
 }
